@@ -1,0 +1,237 @@
+ 
+
+
+    Table -  Users - all users registered with mobile application
+
+
+    mobile user registration from --> server: userRegistrationScript --> take users details and store in the dabase table User
+
+    what would be the url for server user registered part?
+    
+    Traditionanl:Non RESTful style
+    ------------------------
+
+    POST /RegisterUserServlet         
+    {
+      "firstName":"James",
+      "lastName":"Bond"
+    }
+    - URI
+    -Json payload
+    -
+
+
+RESTful:
+---------
+
+POST /users
+{
+	"firstName":"James",
+	"lastName":"Bond"
+}
+
+----------------------------
+Other HTTP Methods:
+------------------------
+Traditional:
+------------
+GET /GetUserDetailsServlet?userId=1
+- Query Parameter
+- query String
+
+GET /DeleteUserDetailsServlet/userId=1
+
+
+POST /UpdateUserDetailsServlet
+{
+	""firstName":"James",
+	"lastName":"Bond",
+	"userId": "1" 
+}
+
+GET /GetAllUsersServlet
+
+GET /UserDetailsServlet?userid=1
+
+ /GetMessageCommetns?userid=1&messageid=5
+
+ /GetMessageCommetns?userid=1&messageid=5&commentid=1
+
+REST:
+-----
+GET /users/1
+- path parameter not queryString
+
+DELETE /users/1
+- same just changes the Http method
+- not perform ant action in the URI - our URI as simple
+
+PUT /users/1
+{
+	"firstName":"James",
+	"lastName":"Bond"
+}
+
+GET /users/1
+	
+GET /users
+
+GET /users/1/messages/5/comments/1
+
+Naming Tips:
+------------
+
+Nouns are opposed to to verbs or actions. Ex. /users vs /getUsers/
+Plurals. Ex. /users/1 vs /user/1
+Predictable
+
+Ex. /users/1/messages vs /users/1/publishedMessages/
+
+/users/1/messages/2/likes vs /users/1/publishedMessages/2/allLikes
+
+------------------------------------------------------------------------------------------------
+HTTP Methods:
+-------------
+ - once we create our webservice the way our mobile or website communicate with it by sending HTTP REQUEST.
+This HTTP Request will contains information needed for specific iteration to be performed by our webservice.
+And we will use HTTP Methods to specify: how the information will be pass in our HTTP Request and which iteration need to be perform by our webservice.
+
+Non RESTful:
+POST - Create user. /RegisterUserServlet and we send json payload as http body for pass the data to this servlet like 
+{
+   "fistName":"Raj",
+   "lastName":"Khare",
+   "email":"raj.khare@gmail.com"	
+}
+
+GET - Read user details. /GetUserDetailsServlet?userid=1 userid is the part of query string
+POST - Update user details. /UpdateUserDetailsServlet and we send json payload as http body for pass the data to this servlet for saving in database. userid is also the part of http body in json payload
+GET or POST - Delete  user details. /DeleteUserDetailsServlet?userid=1
+
+RESTful:
+Here specific http methods for specific iteration
+POST - Create user. /users
+GET - Read user details. /users/1
+PUT - Update user details. /users/1
+DELETE - Delete user details. /users/1
+So here see we have the same type of url so how it will know which iteration need to be perform?
+that will http methos will tell that which type of iteration need to be perform.
+
+-----------------------------------------------------------------------------------------------------
+
+When we send the POST Request:
+Body = {"":""} - proper json and we need to tell the receving end that is the json object so java can change it into java object
+But question is How?
+In Header - Content-Type: application/json
+
+But some times server also send back some attachments or data type like json or xml so we need to tell what type we can accept:
+so in Header: Accept: application/json
+----------------------------------------------------------------------------------------------------------
+                     Web Service Application Layers:
+                   -----------------------------------
+   each of this layers has its own resposibilities and Objects to work:
+
+Presentation Layer:
+-------------------
+accepting information from HTTP Requeset and Then passes this information to service layer.
+
+UserModelRest --> UsersRestController --->
+
+Service Layer:
+Do the all business logics like validations, converion, sorting need to be done for the iteration 
+
+UserDto --> UsersService --->
+
+
+Data Layer: 
+Resonsible to communcate to database.
+data access oject or crud repository object. all the sql queries. also contains entity object
+
+UserDto --> UserEntity --> UsersRepository --> MySQL
+
+Note: Presentation layers object do not directly access Data layer object
+And  Entity oject do not back response to http request.
+
+So if the application like organised this way then its very good to maintenance.
+
+---------------------------------------------------------------------------------------------------
+Install mysql server
+and after install default location
+
+cd /user/local
+cd mysql-8.0.16-macos10.14-x86_64
+cd support-files
+./mysql.server
+sudo ./mysql.server start
+  if any problem then ctrl+c
+sudo killall mysqld
+
+then cd .. cd.. 
+sudo chown -R mysql  mysql-8.0.16-macos10.14-x86_64 - change the ownership
+
+now again try:
+cd mysql-8.0.16-macos10.14-x86_64
+cd support-files
+sudo ./mysql.server start
+
+then
+cd ..
+cd bin
+./mysql -u root -p
+--------------------------------------------------------------------------------------------------------
+>sql  : exit
+./mysql -u root -p
+
+show databases;
+
+create database photo_app;
+use photo_app;
+--> Database changed
+
+show tables;
+
+Lets create new database user:
+first we need to login as a root user:
+./mysql -u root -p
+create user 'username'@'localhost' identified by 'password';
+
+Now give this user to all permission to work with database:
+grant all privileges on dbname.* to 'username'@'localhost';
+
+flush privileges;
+exit
+
+./mysql -u raj -p
+show databases;
+use photo_app;
+show tables;
+
+good news is that we dont need to create the database tables that hibernate automatically created by java Entity objects special annotation @Entity. if tables in not exist.
+
+--------------------------------------------------------------------------------------------------------------- 
+download mysql workbench:
+https://dev.mysql.com/downloads/workbench/
+----------------------------------------------------------------------------------------------------------------
+Create connection by mysql workbenc
++ button -> dabname : all defaults : useraname : store in keychain password - > test connection -> ok --> close
+
+if not work alter user details:
+alter user 'uaername'@'localhost' identified with mysql_native_password by 'password';
+
+----------------------------------------------------------------------------------------------------------------
+
+Java Path: go to folder
+/Library/Java/JavaVirtualMachines
+
+To copy the path  for creating JAVA_HOME:
+ /Library/Java/JavaVirtualMachines/jdk-13.0.1.jdk/Contents/Home
+
+ cd /Library/Java/JavaVirtualMachines/jdk-13.0.1.jdk/Contents/Home
+ export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-13.0.1.jdk/Contents/Home
+-----------------------------------------------------------------------------------------------------------------
+Download STS:
+https://spring.io/tools
+
+------------------------------------------------------------------------------------------------------------------
+
+
